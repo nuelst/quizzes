@@ -1,0 +1,355 @@
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: calc(100vh - 64px);
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+  gap: 1rem;
+  color: var(--muted);
+}
+
+.loadingGlobe {
+  animation: spin 1s linear infinite;
+}
+
+.errorMsg button {
+  background: none;
+  color: var(--accent);
+  font-size: inherit;
+  text-decoration: underline;
+}
+
+/* Ready screen */
+.readyCard, .resultsCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid rgba(10,10,15,0.08);
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.5s ease both;
+  margin-top: 2rem;
+}
+
+.readyEmoji, .resultsEmoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
+}
+
+.readyTitle, .resultsTitle {
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.readyDesc {
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.readyMeta {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.readyMeta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.startBtn {
+  padding: 0.875rem 2.5rem;
+  background: var(--accent);
+  color: white;
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(232, 93, 38, 0.3);
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 280px;
+}
+
+.startBtn:hover {
+  background: var(--accent-glow);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(232, 93, 38, 0.4);
+}
+
+.backLink {
+  background: none;
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  transition: color 0.2s;
+}
+
+.backLink:hover { color: var(--ink); }
+
+/* Results */
+.xpResult {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0.75rem 0 1.5rem;
+}
+
+.resultStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.resultStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: var(--paper);
+  border-radius: var(--radius);
+}
+
+.resultStatNum {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.resultStat span:last-child {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.resultActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+/* Game */
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: fadeUp 0.4s ease both;
+}
+
+.progressBar {
+  height: 6px;
+  background: rgba(10,10,15,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.questionMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.questionCount {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.quizTitle {
+  font-weight: 500;
+}
+
+.questionCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  border: 1.5px solid rgba(10,10,15,0.08);
+  text-align: center;
+}
+
+.questionIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.questionText {
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.answersGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 500px) {
+  .answersGrid { grid-template-columns: 1fr; }
+}
+
+.answerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: white;
+  border: 2px solid rgba(10,10,15,0.1);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ink);
+  text-align: left;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.answerBtn:not(:disabled):hover {
+  border-color: var(--accent);
+  background: #fff8f5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(232, 93, 38, 0.15);
+}
+
+.answerBtn:disabled { cursor: not-allowed; }
+
+.answerBtn.correct {
+  border-color: var(--green);
+  background: #f0faf4;
+  animation: pulse 0.4s ease;
+}
+
+.answerBtn.wrong {
+  border-color: var(--red);
+  background: #fff5f5;
+  animation: shake 0.4s ease;
+}
+
+.answerBtn.dimmed {
+  opacity: 0.45;
+  border-color: transparent;
+}
+
+.answerText { flex: 1; }
+
+.answerIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Feedback bar */
+.feedback {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+  animation: fadeUp 0.3s ease both;
+}
+
+.feedbackCorrect {
+  background: #f0faf4;
+  border: 1.5px solid var(--green);
+}
+
+.feedbackWrong {
+  background: #fff5f5;
+  border: 1.5px solid var(--red);
+}
+
+.feedbackContent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.feedbackEmoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedbackContent strong { display: block; font-size: 0.95rem; color: var(--ink); }
+
+.feedbackXp {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.nextBtn {
+  padding: 0.6rem 1.25rem;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.nextBtn:hover {
+  background: var(--accent);
+  transform: translateX(2px);
+}
+
+/* XP floating animation */
+.xpFloat {
+  position: fixed;
+  pointer-events: none;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  z-index: 9999;
+  animation: xpFloat 1.2s ease forwards;
+  transform: translateX(-50%);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
