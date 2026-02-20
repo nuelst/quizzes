@@ -1,0 +1,123 @@
+.page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+  animation: fadeUp 0.4s ease both;
+}
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 2.2rem;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.4rem;
+}
+
+.sub { color: var(--muted); font-size: 0.95rem; }
+
+.loading, .empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 4rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.loadingIcon { animation: spin 1s linear infinite; }
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: white;
+  border-radius: var(--radius);
+  border: 1.5px solid rgba(10,10,15,0.06);
+  animation: fadeUp 0.4s ease both;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.row:hover {
+  border-color: rgba(10,10,15,0.12);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.top3 {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, #fffdf0, white);
+}
+
+.isMe {
+  border-color: var(--accent) !important;
+  background: linear-gradient(135deg, #fff8f5, white) !important;
+}
+
+.position {
+  width: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.medalIcon { color: var(--gold); }
+
+.posNum {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.info { flex: 1; min-width: 0; }
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.username {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 0.15rem;
+}
+
+.youBadge {
+  padding: 0.15rem 0.5rem;
+  background: var(--accent);
+  color: white;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+
+.xp {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
