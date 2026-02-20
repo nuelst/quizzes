@@ -1,4 +1,5 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { useState, createContext, useContext, ReactNode, useMemo, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { User } from '../types';
 import { userApi } from '../api';
 
@@ -23,39 +24,45 @@ const UserContext = createContext<UserContextType>({
 });
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(() => localStorage.getItem(USER_ID_KEY));
+  const queryClient = useQueryClient();
 
-  const fetchUser = async () => {
-    const savedId = localStorage.getItem(USER_ID_KEY);
-    if (!savedId) { setLoading(false); return; }
-    try {
-      const u = await userApi.getById(savedId);
-      setUser(u);
-    } catch {
-      localStorage.removeItem(USER_ID_KEY);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: user, isLoading, isError } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => userApi.getById(userId as string),
+    enabled: !!userId,
+    retry: 1,
+  });
 
-  useEffect(() => { fetchUser(); }, []);
+  useEffect(() => {
+    if (!isError) return;
+    localStorage.removeItem(USER_ID_KEY);
+    setUserId(null);
+  }, [isError]);
 
   const login = (u: User) => {
     localStorage.setItem(USER_ID_KEY, u.id);
-    setUser(u);
+    setUserId(u.id);
+    queryClient.setQueryData(['user', u.id], u);
   };
 
   const logout = () => {
     localStorage.removeItem(USER_ID_KEY);
-    setUser(null);
+    setUserId(null);
+    queryClient.removeQueries({ queryKey: ['user'] });
   };
 
-  return (
-    <UserContext.Provider value={{ user, loading, login, logout, refreshUser: fetchUser, isLoggedIn: !!user }}>
-      {children}
-    </UserContext.Provider>
+  const refreshUser = () => {
+    if (!userId) return;
+    queryClient.invalidateQueries({ queryKey: ['user', userId] });
+  };
+
+  const value = useMemo(
+    () => ({ user: user ?? null, loading: isLoading, login, logout, refreshUser, isLoggedIn: !!user }),
+    [user, isLoading, login, logout, refreshUser],
   );
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
 
 export const useUser = () => useContext(UserContext);

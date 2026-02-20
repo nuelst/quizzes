@@ -1,21 +1,18 @@
-import { useState, useEffect } from 'react';
 import { AlertTriangle, LoaderCircle } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { quizApi } from '../api';
-import { Quiz } from '../types';
 import { QuizCard } from '../components/QuizCard';
 import styles from './Quizzes.module.css';
 
 export function QuizzesPage() {
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    quizApi.getAll()
-      .then(setQuizzes)
-      .catch(() => setError('Não foi possível carregar os quizzes. Verifique se o servidor está rodando.'))
-      .finally(() => setLoading(false));
-  }, []);
+  const {
+    data: quizzes = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['quizzes'],
+    queryFn: quizApi.getAll,
+  });
 
   return (
     <div className={styles.page}>
@@ -24,21 +21,21 @@ export function QuizzesPage() {
         <p className={styles.sub}>Escolha um quiz e teste seus conhecimentos de geografia</p>
       </div>
 
-      {loading && (
+      {isLoading && (
         <div className={styles.loading}>
           <LoaderCircle className={styles.spinner} size={44} />
           <p>Carregando quizzes...</p>
         </div>
       )}
 
-      {error && (
+      {isError && (
         <div className={styles.error}>
           <AlertTriangle size={18} />
-          <span>{error}</span>
+          <span>Não foi possível carregar os quizzes. Verifique se o servidor está rodando.</span>
         </div>
       )}
 
-      {!loading && !error && (
+      {!isLoading && !isError && (
         <div className={styles.grid}>
           {quizzes.map((quiz, i) => (
             <QuizCard key={quiz.id} quiz={quiz} index={i} />

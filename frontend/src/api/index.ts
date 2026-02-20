@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { AnswerResult, Attempt, AttemptResult, Quiz, QuizDetail, RankingEntry, SessionResult, User } from '../types';
+import { env } from '../env';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3333',
+  baseURL: env.VITE_API_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
