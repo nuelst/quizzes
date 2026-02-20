@@ -1,20 +1,18 @@
-import { useState, useEffect } from 'react';
 import { Inbox, LoaderCircle, Medal, Trophy } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { authApi } from '../api';
-import { RankingEntry } from '../types';
 import { useUser } from '../hooks/useUser';
 import styles from './Ranking.module.css';
 
 export function RankingPage() {
   const { user } = useUser();
-  const [ranking, setRanking] = useState<RankingEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    authApi.ranking(20)
-      .then(setRanking)
-      .finally(() => setLoading(false));
-  }, []);
+  const {
+    data: ranking = [],
+    isLoading,
+  } = useQuery({
+    queryKey: ['ranking', 20],
+    queryFn: () => authApi.ranking(20),
+  });
 
   return (
     <div className={styles.page}>
@@ -26,7 +24,7 @@ export function RankingPage() {
         <p className={styles.sub}>Os melhores jogadores de geografia do mundo</p>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className={styles.loading}>
           <LoaderCircle className={styles.loadingIcon} size={40} />
           <p>Carregando ranking...</p>

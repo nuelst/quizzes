@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Check, CircleCheckBig, CircleHelp, CircleX, LoaderCircle, Smile, Target, Trophy, X, Zap } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { quizApi, attemptApi } from '../api';
 import { QuizDetail, AnswerResult, AttemptResult } from '../types';
 import { useUser } from '../hooks/useUser';
@@ -20,7 +21,6 @@ export function QuizPlayPage() {
   const navigate = useNavigate();
   const { refreshUser } = useUser();
 
-  const [quiz, setQuiz] = useState<QuizDetail | null>(null);
   const [gameState, setGameState] = useState<GameState>('loading');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [attemptId, setAttemptId] = useState('');
@@ -30,17 +30,51 @@ export function QuizPlayPage() {
   const [xpFloats, setXpFloats] = useState<XpFloat[]>([]);
   const xpFloatId = useRef(0);
 
+  const quizQuery = useQuery({
+    queryKey: ['quiz', id],
+    queryFn: () => quizApi.getById(id as string),
+    enabled: !!id,
+  });
+
+  const startAttemptMutation = useMutation({
+    mutationFn: (quizId: string) => attemptApi.start(quizId),
+  });
+
+  const submitAnswerMutation = useMutation({
+    mutationFn: (payload: { attemptId: string; questionId: string; answerId: string }) =>
+      attemptApi.submitAnswer(payload.attemptId, payload.questionId, payload.answerId),
+  });
+
+  const completeAttemptMutation = useMutation({
+    mutationFn: (attemptId: string) => attemptApi.complete(attemptId),
+  });
+
   useEffect(() => {
     if (!id) return;
-    quizApi.getById(id)
-      .then((q) => { setQuiz(q); setGameState('ready'); })
-      .catch(() => setGameState('error'));
+    setGameState('loading');
+    setCurrentIndex(0);
+    setAttemptId('');
+    setSelectedAnswer('');
+    setAnswerResult(null);
+    setFinalResult(null);
   }, [id]);
 
+  useEffect(() => {
+    if (quizQuery.isLoading) return;
+    if (quizQuery.isError) {
+      setGameState('error');
+      return;
+    }
+    if (quizQuery.data && gameState === 'loading') {
+      setGameState('ready');
+    }
+  }, [quizQuery.isLoading, quizQuery.isError, quizQuery.data, gameState]);
+
   const startQuiz = async () => {
+    const quiz = quizQuery.data;
     if (!quiz) return;
     try {
-      const attempt = await attemptApi.start(quiz.id);
+      const attempt = await startAttemptMutation.mutateAsync(quiz.id);
       setAttemptId(attempt.id);
       setCurrentIndex(0);
       setGameState('playing');
@@ -50,13 +84,14 @@ export function QuizPlayPage() {
   };
 
   const handleAnswer = async (answerId: string, event: React.MouseEvent) => {
+    const quiz = quizQuery.data;
     if (gameState !== 'playing' || !quiz) return;
     setSelectedAnswer(answerId);
     setGameState('answered');
 
     const question = quiz.questions[currentIndex];
     try {
-      const result = await attemptApi.submitAnswer(attemptId, question.id, answerId);
+      const result = await submitAnswerMutation.mutateAsync({ attemptId, questionId: question.id, answerId });
       setAnswerResult(result);
       refreshUser();
 
@@ -76,12 +111,13 @@ export function QuizPlayPage() {
   };
 
   const nextQuestion = async () => {
+    const quiz = quizQuery.data;
     if (!quiz) return;
     const isLast = currentIndex === quiz.questions.length - 1;
 
     if (isLast) {
       try {
-        const result = await attemptApi.complete(attemptId);
+        const result = await completeAttemptMutation.mutateAsync(attemptId);
         setFinalResult(result);
         setGameState('results');
       } catch {
@@ -112,6 +148,7 @@ export function QuizPlayPage() {
     );
   }
 
+  const quiz = quizQuery.data as QuizDetail | undefined;
   if (!quiz) return null;
 
   // Ready screen

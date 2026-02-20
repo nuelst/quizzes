@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
 import { authApi } from '../api';
 import { useUser } from '../hooks/useUser';
 import styles from './Login.module.css';
@@ -16,17 +17,19 @@ export function LoginPage() {
   const [step, setStep] = useState<Step>('username');
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const loginMutation = useMutation({
+    mutationFn: (payload: { username: string; name?: string }) => authApi.session(payload.username, payload.name),
+  });
 
   const handleUsernameSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!username.trim()) return;
-    setLoading(true);
     setError('');
 
     try {
-      const result = await authApi.session(username.toLowerCase().trim());
+      const result = await loginMutation.mutateAsync({ username: username.toLowerCase().trim() });
       login(result.user);
       navigate(from, { replace: true });
     } catch (err: any) {
@@ -37,24 +40,21 @@ export function LoginPage() {
         setError('Erro ao conectar. Tente novamente.');
       }
     } finally {
-      setLoading(false);
     }
   };
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    setLoading(true);
     setError('');
 
     try {
-      const result = await authApi.session(username.toLowerCase().trim(), name.trim());
+      const result = await loginMutation.mutateAsync({ username: username.toLowerCase().trim(), name: name.trim() });
       login(result.user);
       navigate(from, { replace: true });
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Erro ao criar perfil.');
     } finally {
-      setLoading(false);
     }
   };
 
@@ -88,8 +88,8 @@ export function LoginPage() {
 
               {error && <div className={styles.error}>{error}</div>}
 
-              <button className={styles.btn} type="submit" disabled={loading}>
-                {loading ? 'Verificando...' : 'Continuar →'}
+              <button className={styles.btn} type="submit" disabled={loginMutation.isPending}>
+                {loginMutation.isPending ? 'Verificando...' : 'Continuar →'}
               </button>
             </form>
           </>
@@ -119,8 +119,8 @@ export function LoginPage() {
 
               {error && <div className={styles.error}>{error}</div>}
 
-              <button className={styles.btn} type="submit" disabled={loading}>
-                {loading ? 'Criando perfil...' : 'Criar perfil e entrar →'}
+              <button className={styles.btn} type="submit" disabled={loginMutation.isPending}>
+                {loginMutation.isPending ? 'Criando perfil...' : 'Criar perfil e entrar →'}
               </button>
 
               <button
