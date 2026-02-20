@@ -8,7 +8,6 @@ import { USER_REPOSITORY } from './domain/repositories/user.repository';
 import { QUIZ_REPOSITORY } from './domain/repositories/quiz.repository';
 import { ATTEMPT_REPOSITORY } from './domain/repositories/attempt.repository';
 
-// Use Cases
 import { GetAllQuizzesUseCase } from './application/use-cases/quiz/get-all-quizzes.use-case';
 import { GetQuizByIdUseCase } from './application/use-cases/quiz/get-quiz-by-id.use-case';
 import { GetUserUseCase } from './application/use-cases/user/get-user.use-case';
@@ -18,7 +17,6 @@ import { CompleteAttemptUseCase } from './application/use-cases/attempt/complete
 import { LoginOrRegisterUseCase } from './application/use-cases/auth/login-or-register.use-case';
 import { GetRankingUseCase } from './application/use-cases/auth/get-ranking.use-case';
 
-// Controllers
 import { QuizController } from './infrastructure/http/controllers/quiz.controller';
 import { UserController } from './infrastructure/http/controllers/user.controller';
 import { AttemptController } from './infrastructure/http/controllers/attempt.controller';
@@ -35,11 +33,9 @@ import { AuthController } from './infrastructure/http/controllers/auth.controlle
   controllers: [AuthController, QuizController, UserController, AttemptController],
   providers: [
     PrismaService,
-    // Repository bindings (Dependency Inversion Principle)
     { provide: USER_REPOSITORY, useClass: PrismaUserRepository },
     { provide: QUIZ_REPOSITORY, useClass: PrismaQuizRepository },
     { provide: ATTEMPT_REPOSITORY, useClass: PrismaAttemptRepository },
-    // Use Cases
     LoginOrRegisterUseCase,
     GetRankingUseCase,
     GetAllQuizzesUseCase,
@@ -50,4 +46,4 @@ import { AuthController } from './infrastructure/http/controllers/auth.controlle
     CompleteAttemptUseCase,
   ],
 })
-export class AppModule {}
+export class AppModule { }
