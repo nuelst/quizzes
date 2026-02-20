@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, ReactNode, useMemo } from 'react';
+import { useState, createContext, useContext, ReactNode, useMemo, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { User } from '../types';
 import { userApi } from '../api';
@@ -27,16 +27,18 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [userId, setUserId] = useState<string | null>(() => localStorage.getItem(USER_ID_KEY));
   const queryClient = useQueryClient();
 
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading, isError } = useQuery({
     queryKey: ['user', userId],
     queryFn: () => userApi.getById(userId as string),
     enabled: !!userId,
     retry: 1,
-    onError: () => {
-      localStorage.removeItem(USER_ID_KEY);
-      setUserId(null);
-    },
   });
+
+  useEffect(() => {
+    if (!isError) return;
+    localStorage.removeItem(USER_ID_KEY);
+    setUserId(null);
+  }, [isError]);
 
   const login = (u: User) => {
     localStorage.setItem(USER_ID_KEY, u.id);
